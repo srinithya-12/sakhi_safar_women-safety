@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAKHI SAFAR | AI-Based Women Travel Safety System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="glass-header">
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <span class="logo-text">Suraksha Safar</span>
+            </div>
+
+  
+            <nav class="nav-links">
+                <a href="#" onclick="showSection('home')">Dashboard</a>
+<a href="#" onclick="showSection('planner')">Planner</a>
+<a href="#" onclick="showSection('guide')">Safety Guide</a>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+            </nav>
+            <div class="profile-area">
+    <span id="user-name">Guest</span>
+</div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+<!-- HOME (default visible) -->
+<section id="home-section">
+    <!-- your hero + dashboard content -->
+</section>
+
+<!-- PLANNER (hidden initially) -->
+<section id="planner-section" style="display:none;">
+    <h2>Planner</h2>
+    <div id="map" style="height:300px;"></div>
+</section>
+
+<!-- SAFETY GUIDE (hidden initially) -->
+<section id="guide-section" style="display:none;">
+    <h2>Safety Guide</h2>
+    <p>Women safety tips, emergency actions, etc.</p>
+</section>
+        <section class="hero text-center">
+            <h1 class="hero-title">Empowering Your Journey</h1>
+            <p class="hero-subtitle">Your AI-powered safety companion offering real-time risk intelligence, active
+                routing, and immediate emergency response.</p>
+        </section>
+
+        <div class="grid-layout">
+
+            <!-- LEFT COLUMN: Analyzer & AI Insights -->
+            <div class="grid-col layout-main">
+                <div class="glass-card analyzer-card">
+
+                    <div class="card-head">
+                        <h3><i class="fa-solid fa-location-crosshairs"></i> Destination Safety Check</h3>
+                    </div>
+
+
+                    <div class="input-group">
+                        <select id="city-select" class="modern-select">
+                            <option value="">Select a destination...</option>
+                            <option value="mumbai">Mumbai, Maharashtra</option>
+                            <option value="delhi">New Delhi, Delhi</option>
+                            <option value="bangalore">Bengaluru, Karnataka</option>
+                        </select>
+                        <button id="analyze-btn" class="btn btn-primary">
+                            <i class="fa-solid fa-magnifying-glass"></i> Analyze
+                        </button>
+                    </div>
+
+<!-- ✅ ADD MAP HERE (AFTER analyzer card) -->
+<div class="glass-card">
+    <div class="card-head">
+        <h3><i class="fa-solid fa-location-dot"></i> Live Location</h3>
+    </div>
+!-- THIS IS THE MAP DIV -->
+    <div id="map" style="height: 250px; border-radius: 10px; margin-top: 10px;"></div>
+
+    <button onclick="startTracking()" class="btn btn-primary mt-4">
+        Start Tracking
+    </button>
+</div>
+
+                    <!-- Visual Safety Score & Risk Badge -->
+                    <div class="score-container">
+                        <div class="circular-progress">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke-dasharray="0, 100"
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">--%</text>
+                            </svg>
+                        </div>
+                        <div class="risk-badge" id="risk-badge">Pending Analysis</div>
+                    </div>
+
+                    <!-- Day / Night Indicators -->
+                    <div class="time-safety-box">
+                        <div class="time-indicator">
+                            <i class="fa-solid fa-sun icon-day"></i>
+                            <div>
+                                <span>Daytime Risk</span>
+                                <strong id="day-safety">--</strong>
+                            </div>
+                        </div>
+                        <div class="time-indicator">
+                            <i class="fa-solid fa-moon icon-night"></i>
+                            <div>
+                                <span>Night Risk</span>
+                                <strong id="night-safety">--</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Recommendation -->
+                <div class="glass-card ai-box">
+                    <div class="ai-header">
+                        <i class="fa-solid fa-robot"></i> AI Intelligence Brief
+                    </div>
+                    <p id="ai-text" class="ai-content">
+                        Please select a city to process local crime statistics and generate intelligent travel
+                        recommendations.
+                    </p>
+                </div>
+            </div>
+
+            <!-- MIDDLE COLUMN: Routes & Travel Mode -->
+            <div class="grid-col layout-mid">
+                <div class="glass-card">
+                    <div class="card-head">
+                        <h3><i class="fa-solid fa-person-walking-luggage"></i> Travel Context</h3>
+                    </div>
+                    <div class="segmented-control">
+                        <button class="segment-btn active">Solo</button>
+                        <button class="segment-btn">Group</button>
+                        <button class="segment-btn">Night</button>
+                    </div>
+
+                    <div class="route-lists mt-4">
+                        <div class="route-category safe-routes">
+                            <h4><i class="fa-solid fa-shield-check icon-safe"></i> Verified Safe Routes</h4>
+                            <ul id="safe-routes-list">
+                                <li>Waiting for destination...</li>
+                            </ul>
+                        </div>
+                        <div class="route-category unsafe-routes">
+                            <h4><i class="fa-solid fa-triangle-exclamation icon-danger"></i> Areas to Avoid</h4>
+                            <ul id="unsafe-routes-list">
+                                <li>Waiting for destination...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <div class="card-head">
+                        <h3><i class="fa-solid fa-building-user"></i> Certified Safe Places</h3>
+                    </div>
+                    <div id="nearby-places-list" class="tags-container">
+                        <p class="text-muted">Awaiting analysis for nearby secure zones (Hospitals, Police, Safe
+                            Havens).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Utilities & Emergency -->
+            <div class="grid-col layout-side">
+
+                <!-- Verified Logistics -->
+                <div class="glass-card">
+                    <div class="card-head">
+                        <h3><i class="fa-solid fa-certificate"></i> Verified Partners</h3>
+                    </div>
+                    <div id="verified-items-container">
+                        <div class="partner-card">
+                            <div class="partner-icon"><i class="fa-solid fa-car-side"></i></div>
+                            <div>
+                                <strong>Safe Transit</strong>
+                                <span>Select a city first</span>
+                            </div>
+                        </div>
+                        <div class="partner-card">
+                            <div class="partner-icon"><i class="fa-solid fa-hotel"></i></div>
+                            <div>
+                                <strong>Secure Stays</strong>
+                                <span>Select a city first</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checklist -->
+                <div class="glass-card">
+                    <div class="card-head">
+                        <h3><i class="fa-solid fa-list-check"></i> Standard Protocol</h3>
+                    </div>
+                    <div class="checklist">
+                        <label class="custom-check">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            Live location sharing ON
+                        </label>
+                        <label class="custom-check">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Offline maps downloaded
+                        </label>
+                        <label class="custom-check">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Verified transport booked
+                        </label>
+                        <label class="custom-check">
+                            <input type="checkbox">
+                            <span class="checkmark"></span>
+                            Battery > 80% & Powerbank
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Contacts -->
+                <div class="glass-card emergency-border">
+                    <div class="card-head text-accent">
+                        <h3><i class="fa-solid fa-phone-volume"></i> Emergency Dispatch</h3>
+                    </div>
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <div class="contact-info">
+                                <strong>Women's Helpline</strong>
+                                <span>1091</span>
+                            </div>
+                            <button class="call-action"><i class="fa-solid fa-phone"></i></button>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-info">
+                                <strong>Central Police</strong>
+                                <span>112</span>
+                            </div>
+                            <button class="call-action"><i class="fa-solid fa-phone"></i></button>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-info">
+                                <strong>Ambulance</strong>
+                                <span>108</span>
+                            </div>
+                            <button class="call-action"><i class="fa-solid fa-phone"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+<div id="planner-section" style="display:none;">
+    <div class="container">
+        <div class="glass-card" style="max-width:700px; margin:auto;">
+            <div class="card-head">
+                <h3><i class="fa-solid fa-location-dot"></i> Live Tracking</h3>
+            </div>
+
+            <div id="map" style="height:400px; border-radius:10px;"></div>
+
+            <button onclick="startTracking()" class="btn btn-primary mt-4">
+                Start Tracking
+            </button>
+        </div>
+    </div>
+</div>
+    <!-- Floating SOS Button & Status -->
+    <div class="sos-wrapper">
+        <div class="sos-status">Last SOS: <span id="last-sos-time">Never</span></div>
+        <button id="sos-btn" class="sos-pulse">
+            <i class="fa-solid fa-fingerprint fa-2x"></i>
+            <span>SOS</span>
+        </button>
+    </div>
+
+    <!-- SOS Modal Overlay -->
+    <div id="sos-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-icon-container">
+                <i class="fa-solid fa-exclamation"></i>
+            </div>
+            <h2 class="modal-title text-accent">EMERGENCY ACTIVATED</h2>
+            <p class="modal-desc">Warning: Your live GPS coordinates are being transmitted to local authorities and your
+                pre-set emergency contacts.</p>
+
+            <div class="modal-actions">
+                <button id="btn-cancel-sos" class="btn btn-outline">Abort (10s)</button>
+                <button id="btn-confirm-sos" class="btn btn-danger">Confirm Immediate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
